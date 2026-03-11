@@ -39,20 +39,23 @@ this is a small and practical prototype to show a full anomaly detection workflo
 ## files
 
 - `data_pipeline.py`  
-  loads and cleans the california housing dataset.
+  loads and cleans the california housing dataset. this file is only about data, so it is easy to change the dataset or cleaning later.
 
 - `model_pipeline.py`  
-  builds the isolation forest pipeline, scores anomalies, and creates the short explanation text.
+  builds the isolation forest pipeline, scores anomalies, and creates the short explanation text. this file is only about the machine learning logic.
 
 - `app.py`  
-  streamlit user interface: controls, data preview, running the model, visualisations, and explanation.
+  streamlit user interface: controls, data preview, running the model, visualisations, and explanation. this file does not know the details of cleaning or the model, it just calls the other two.
 
 - `requirements.txt`  
   minimal list of python packages needed to run the app.
 
+splitting the project like this (data / model / app) keeps each file small and focused. it also makes it easier to explain in a call: one file for data, one for the model, one for the interface.
+
 ## how to run it locally
 
-1. optional but nice: create and activate a virtual environment
+1. optional but nice: create and activate a virtual environment  
+   this is not mandatory, it just keeps this project’s python packages separate from the rest of your system.
 
    ```bash
    python -m venv .venv
