@@ -1,4 +1,8 @@
-# hopn anomaly detection prototype
+# housing anomaly detection system
+
+isolation forest + streamlit
+
+## overview
 
 this is a small and practical prototype to show a full anomaly detection workflow in python. it is kept simple on purpose so it is easy to read, talk about, and extend later.
 
@@ -36,7 +40,14 @@ this is a small and practical prototype to show a full anomaly detection workflo
   - pick the features where this difference is largest.
   - generate short sentences like “feature `population` tends to be higher for anomalous areas compared to normal ones.”
 
-## files
+## tech stack
+
+- **python** with `pandas`, `numpy`, `scikit-learn`
+- **model**: `isolationforest` for unsupervised anomaly detection
+- **ui**: `streamlit` for the simple web interface
+- **plots**: `matplotlib` + `seaborn`
+
+## project files and structure
 
 - `data_pipeline.py`  
   loads and cleans the california housing dataset. this file is only about data, so it is easy to change the dataset or cleaning later.
@@ -88,5 +99,9 @@ splitting the project like this (data / model / app) keeps each file small and f
 - **features and model**: “numeric features are scaled, and an isolation forest model is trained on top of that. isolation forest is a classic unsupervised anomaly detection method that works well on tabular data and does not need labels.”
 - **visualisation**: “the app shows which rows are anomalous, how the anomaly scores are distributed, and which numeric features look most different between anomalies and normal areas.”
 - **explanation**: “i added a tiny rule based explanation that compares average values between anomalies and normal rows and turns that into simple sentences, so it is easier to understand why some areas are flagged as unusual.”
+
+## demo screenshot
+
+![dashboard](assets/dashboard.png)
 
 
