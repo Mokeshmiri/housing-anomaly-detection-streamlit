@@ -1,4 +1,4 @@
-# housing anomaly detection system
+# Housing Anomaly Detection System
 
 isolation forest + streamlit
 
