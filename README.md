@@ -1,107 +1,46 @@
-# Housing Anomaly Detection System
+# Housing Anomaly Detection
 
-isolation forest + streamlit
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Isolation_Forest-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 
-## overview
+An interactive app that finds **unusual areas** in the California Housing dataset and explains, in plain language, why they stand out. It is a small end-to-end example of unsupervised anomaly detection: data cleaning, a scikit-learn pipeline, visual analysis and a readable explanation.
 
-this is a small and practical prototype to show a full anomaly detection workflow in python. it is kept simple on purpose so it is easy to read, talk about, and extend later.
+![Dashboard](assets/dashboard.png)
 
-## what this app does
+## What it does
 
-- **dataset**: uses the `california housing` dataset from `scikit-learn`. each row represents a small area in california with housing and demographic information (for example median income, average rooms, population, latitude and longitude, and median house value).
-- **goal**: find areas that look unusual compared to the rest (possible anomalies).
-- **model**: isolation forest from `scikit-learn` (unsupervised anomaly detection).
-- **interface**: streamlit app with a clear, step by step layout.
+1. **Loads and cleans data.** Fetches the California Housing dataset from scikit-learn, samples a chosen number of rows (at least 5,000), keeps the numeric columns and fills missing values with the column median.
+2. **Trains a model.** A single scikit-learn pipeline: `StandardScaler` followed by `IsolationForest`. You set `contamination`, your estimate of the share of anomalies.
+3. **Scores every area.** Each row gets an `anomaly_score` (higher means more unusual) and a binary `is_anomaly` flag.
+4. **Shows the results.**
+   - A table of the anomalous rows, sorted by score
+   - A histogram of anomaly scores
+   - A bar chart of the 5 features that differ most between anomalies and normal rows
+5. **Explains them.** Rule-based sentences compare feature averages, for example: "population tends to be higher for anomalous areas".
 
-## main steps in the workflow
+## Run it
 
-- **1. load and clean data**
-  - load the california housing dataset with `sklearn.datasets.fetch_california_housing`.
-  - sample a user chosen number of rows (always at least 5,000) so the app stays fast.
-  - keep numeric columns and fill any missing values with the median of each column.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python3 -m streamlit run app.py
+```
 
-- **2. prepare features and train the model**
-  - scale numeric columns with `standardscaler` so features are on a similar scale.
-  - wrap scaling and the isolation forest model inside a single `sklearn` pipeline.
-  - let the user choose the `contamination` value (their guess of what fraction of rows are anomalies).
+Streamlit opens in your browser. Use the sidebar to set the sample size and `contamination`, then click **Run anomaly detection**.
 
-- **3. detect anomalies**
-  - fit the pipeline on the cleaned data.
-  - compute an `anomaly_score` for each row (higher = more unusual).
-  - add a binary flag `is_anomaly` where `1` means anomaly and `0` means normal.
+## Project structure
 
-- **4. visualise results**
-  - show a table with only the anomalous rows, sorted by highest anomaly score.
-  - plot a histogram of anomaly scores to see how many very unusual rows there are.
-  - compare average numeric feature values between anomalies and normal rows in a bar chart (top 5 features that differ most).
+| File | Responsibility |
+|---|---|
+| `data_pipeline.py` | Loading and cleaning the data |
+| `model_pipeline.py` | The Isolation Forest pipeline, scoring and the explanation text |
+| `app.py` | The Streamlit interface |
+| `requirements.txt` | Python dependencies |
 
-- **5. short plain language explanation**
-  - compare average values of numeric features between anomalies and normal rows.
-  - pick the features where this difference is largest.
-  - generate short sentences like “feature `population` tends to be higher for anomalous areas compared to normal ones.”
+Data, model and interface are kept in separate files, so each can be changed without touching the others.
 
-## tech stack
+## Tech
 
-- **python** with `pandas`, `numpy`, `scikit-learn`
-- **model**: `isolationforest` for unsupervised anomaly detection
-- **ui**: `streamlit` for the simple web interface
-- **plots**: `matplotlib` + `seaborn`
-
-## project files and structure
-
-- `data_pipeline.py`  
-  loads and cleans the california housing dataset. this file is only about data, so it is easy to change the dataset or cleaning later.
-
-- `model_pipeline.py`  
-  builds the isolation forest pipeline, scores anomalies, and creates the short explanation text. this file is only about the machine learning logic.
-
-- `app.py`  
-  streamlit user interface: controls, data preview, running the model, visualisations, and explanation. this file does not know the details of cleaning or the model, it just calls the other two.
-
-- `requirements.txt`  
-  minimal list of python packages needed to run the app.
-
-splitting the project like this (data / model / app) keeps each file small and focused. it also makes it easier to explain in a call: one file for data, one for the model, one for the interface.
-
-## how to run it locally
-
-1. optional but nice: create and activate a virtual environment  
-   this is not mandatory, it just keeps this project’s python packages separate from the rest of your system.
-
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # on windows use: .venv\scripts\activate
-   ```
-
-2. install dependencies
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. start the streamlit app
-
-   ```bash
-   python3 -m streamlit run app.py
-   ```
-
-4. open the browser  
-   streamlit will open a browser tab automatically (or show a local url). from there you can:
-   - adjust sample size and contamination in the sidebar,
-   - see a preview of the cleaned dataset,
-   - click “run anomaly detection”,
-   - explore anomalies, plots, and the text explanation.
-
-## how you can explain this in a call
-
-- **data**: “i used the california housing dataset from scikit‑learn. each row is a small area in california with information like median income, average number of rooms, population, and location. this makes the anomalies easy to think about: we are looking for areas that look very different from the rest.”
-- **processing**: “i do simple but solid cleaning: i work with the numeric features, drop empty columns if there are any, and fill missing numeric values with the median.”
-- **features and model**: “numeric features are scaled, and an isolation forest model is trained on top of that. isolation forest is a classic unsupervised anomaly detection method that works well on tabular data and does not need labels.”
-- **visualisation**: “the app shows which rows are anomalous, how the anomaly scores are distributed, and which numeric features look most different between anomalies and normal areas.”
-- **explanation**: “i added a tiny rule based explanation that compares average values between anomalies and normal rows and turns that into simple sentences, so it is easier to understand why some areas are flagged as unusual.”
-
-## demo screenshot
-
-![dashboard](assets/dashboard.png)
-
-
+Python · pandas · NumPy · scikit-learn · Streamlit · matplotlib · seaborn
